@@ -19,32 +19,33 @@ import (
 )
 
 func main() {
-	client := axme.NewClient(axme.Config{
+	client, err := axme.NewClient(axme.ClientConfig{
 		APIKey: os.Getenv("AXME_API_KEY"),
 	})
+	if err != nil {
+		log.Fatalf("create client: %v", err)
+	}
 
 	ctx := context.Background()
 
 	// Submit payment — platform delivers with retries, no webhook needed
-	intentID, err := client.SendIntent(ctx, axme.SendIntentRequest{
-		IntentType: "payment.process.v1",
-		ToAgent:    "agent://myorg/production/payment-service",
-		Payload: map[string]interface{}{
-			"order_id":       "ord_12345",
-			"amount_cents":   9999,
-			"currency":       "usd",
-			"customer_email": "alice@example.com",
-		},
-	})
+	intentID, err := client.SendIntent(ctx, map[string]any{
+		"intent_type":    "payment.process.v1",
+		"to_agent":       "agent://myorg/production/payment-service",
+		"order_id":       "ord_12345",
+		"amount_cents":   9999,
+		"currency":       "usd",
+		"customer_email": "alice@example.com",
+	}, axme.RequestOptions{})
 	if err != nil {
 		log.Fatalf("send intent: %v", err)
 	}
 	fmt.Printf("Payment submitted: %s\n", intentID)
 
 	// Wait for completion — no webhook callback needed
-	result, err := client.WaitFor(ctx, intentID)
+	result, err := client.WaitFor(ctx, intentID, axme.ObserveOptions{})
 	if err != nil {
 		log.Fatalf("wait: %v", err)
 	}
-	fmt.Printf("Final status: %s\n", result.Status)
+	fmt.Printf("Final status: %v\n", result["status"])
 }

@@ -8,6 +8,7 @@
 //   dotnet run
 
 using Axme.Sdk;
+using System.Text.Json.Nodes;
 
 var client = new AxmeClient(new AxmeClientConfig
 {
@@ -15,20 +16,20 @@ var client = new AxmeClient(new AxmeClientConfig
 });
 
 // Submit payment — platform delivers with retries, no webhook needed
-var intentId = await client.SendIntentAsync(new
+var intentId = await client.SendIntentAsync(new JsonObject
 {
-    intent_type = "payment.process.v1",
-    to_agent = "agent://myorg/production/payment-service",
-    payload = new
+    ["intent_type"] = "payment.process.v1",
+    ["to_agent"] = "agent://myorg/production/payment-service",
+    ["payload"] = new JsonObject
     {
-        order_id = "ord_12345",
-        amount_cents = 9999,
-        currency = "usd",
-        customer_email = "alice@example.com"
+        ["order_id"] = "ord_12345",
+        ["amount_cents"] = 9999,
+        ["currency"] = "usd",
+        ["customer_email"] = "alice@example.com"
     }
 });
 Console.WriteLine($"Payment submitted: {intentId}");
 
 // Wait for completion — no webhook callback needed
 var result = await client.WaitForAsync(intentId);
-Console.WriteLine($"Final status: {result.Status}");
+Console.WriteLine($"Final status: {result["status"]}");

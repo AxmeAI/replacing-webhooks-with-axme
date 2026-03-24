@@ -1,0 +1,38 @@
+{
+  "scenario_id": "replacing-webhooks.demo.v1",
+  "title": "Replacing webhooks with intent lifecycle",
+  "description": "Payment processing with guaranteed delivery. No webhook endpoint, no retry logic, no dead letters.",
+
+  "agents": [
+    {
+      "role": "payment_service",
+      "address": "payment-service-demo",
+      "display_name": "Payment Service",
+      "delivery_mode": "stream",
+      "create_if_missing": true
+    }
+  ],
+
+  "workflow": {
+    "steps": [
+      {
+        "step_id": "process_payment",
+        "tool_id": "tool.agent.task.v1",
+        "assigned_to": "payment_service",
+        "step_deadline_seconds": 120
+      }
+    ]
+  },
+
+  "intent": {
+    "type": "intent.payment.process.v1",
+    "payload": {
+      "order_id": "ORD-8842",
+      "amount": 199.99,
+      "currency": "USD",
+      "method": "card",
+      "customer_id": "CUST-5678"
+    },
+    "max_delivery_attempts": 3
+  }
+}
