@@ -185,19 +185,19 @@ No webhook endpoint. No signature verification. No idempotency layer. No dead le
 ## How It Works
 
 ```
-┌──────────┐    send_intent()     ┌──────────────┐    deliver      ┌─────────────┐
-│  Order    │ ──────────────────►  │              │  (guaranteed)   │  Payment    │
-│  Service  │                      │  AXME Cloud  │ ──────────────► │  Service    │
-│           │ ◄── observe(SSE) ──  │  (platform)  │                 │  (agent)    │
-│           │                      │              │ ◄── resume()    │             │
-└──────────┘                      │  retries,    │   with result   │  processes  │
-                                   │  delivery    │                 │  payment    │
-                                   │  guarantees  │                 └─────────────┘
-                                   └──────────────┘
+┌────────────┐  send_intent()   ┌────────────────┐   deliver    ┌──────────────┐
+│            │ ───────────────> │                │ (guaranteed) │              │
+│   Order    │                  │   AXME Cloud   │ ──────────>  │   Payment    │
+│   Service  │ <─ observe(SSE)  │   (platform)   │              │   Service    │
+│            │                  │                │ <─ resume()  │   (agent)    │
+└────────────┘                  │   retries,     │  with result │              │
+                                │   delivery     │              │  processes   │
+                                │   guarantees   │              │  payment     │
+                                └────────────────┘              └──────────────┘
 
-Before:                            After:
-  Provider → webhook → your server   You → intent → platform → service
-  (fire & pray)                      (guaranteed delivery + observability)
+Before:                         After:
+  Provider -> webhook -> you      You -> intent -> platform -> service
+  (fire & pray)                   (guaranteed delivery + observability)
 ```
 
 1. Order service submits a payment **intent** via AXME SDK
