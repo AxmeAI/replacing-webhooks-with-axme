@@ -5,7 +5,7 @@ Webhooks fail silently. Retries are unreliable. Signature verification is error-
 **There is a better way.** Replace webhook callbacks with intent lifecycle — built-in delivery guarantees, retries, and real-time observability.
 
 > **Alpha** · Built with [AXME](https://github.com/AxmeAI/axme) (AXP Intent Protocol).
-> [cloud.axme.ai](https://cloud.axme.ai) · [hello@axme.ai](mailto:hello@axme.ai)
+> [cloud.axme.ai](https://cloud.axme.ai) · [contact@axme.ai](mailto:contact@axme.ai)
 
 ---
 
